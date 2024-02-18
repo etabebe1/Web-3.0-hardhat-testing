@@ -1,17 +1,15 @@
 {
-  "name": "web3.0-hardhat",
+  "name": "hardhat",
   "version": "1.0.0",
-  "description": "This is Web3.0 Hardhat trial/test",
+  "description": "Web3.0 hardhat testing",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Jeremiah",
+  "author": "jeremiah",
   "license": "ISC",
   "devDependencies": {
-    "hardaht": "^1.0.1"
-  },
-  "dependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^4.0.0"
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.20.1"
   }
 }

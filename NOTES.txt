@@ -40,3 +40,6 @@ AVAILABLE TASKS:
   verify                Verifies contract on Etherscan
 
 To get help for a specific task run: npx hardhat help [task]
+
+=> To deploy script file 
+npx hardhat run script/deploy.js (this is an example)
