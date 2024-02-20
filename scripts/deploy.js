@@ -11,14 +11,28 @@ async function main() {
   const ONE_YEAR_IN_SECONDS = 365 * 24 * 60 * 60;
   const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECONDS;
 
-  console.log(currentTimestampInSeconds);
-  console.log(ONE_YEAR_IN_SECONDS);
-  console.log(unlockTime);
+  // console.log(currentTimestampInSeconds);
+  // console.log(ONE_YEAR_IN_SECONDS);
+  // console.log(unlockTime);
 
-  // const lockedAmount = hre.ethers.parseEther("1");
+  // previously utils was used but now depreciated
+  // const lockedAmount = hre.ethers.utils.parseEther("1");
   const lockedAmount = hre.ethers.parseEther("1");
 
-  console.log(lockedAmount);
+  // console.log(lockedAmount);
+
+  const LockContract = await hre.ethers.getContractFactory("LockContract");
+  const lockContract = await LockContract.deploy(unlockTime, { value: lockedAmount });
+
+  // we don't need the following code as well
+  // await lockContract.deployed();
+
+  // here lockContract.target -- refers to address of the deployer
+  // console.log(lockContract.address); --> previously but depreciated
+  // console.log(lockContract.target);
+  console.log(`Contract contain 1 ETH & address: ${lockContract.target}`);
+  // console.log(lockContract);
+  console.log(LockContract);
 
   // const lock = await hre.ethers.deployContract("Lock", [unlockTime], {
   //   value: lockedAmount,
