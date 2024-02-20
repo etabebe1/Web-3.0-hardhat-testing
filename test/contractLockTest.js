@@ -14,7 +14,7 @@ const { ethers } = require("hardhat");
 
 // console.log(expect);
 
-describe("contract", () => {
+describe("Contract", () => {
   async function runEveryTime() {
     const ONE_YEAR_IN_SECONDS = 365 * 24 * 60 * 60;
     const ONE_GWEI = 1_000_000_000;
@@ -52,6 +52,119 @@ describe("contract", () => {
       // console.log(unlockTime);
 
       expect(await lockContract.unlockTime()).to.equal(unlockTime);
+
+      const value = expect(await lockContract.unlockTime()).to.equal(
+        unlockTime
+      );
+
+      // console.log(value);
+      console.log(value.__flags.object);
+    });
+
+    // CHECKING OWNER
+    it("Should set the right owner", async () => {
+      const { lockContract, owner } = await loadFixture(runEveryTime);
+
+      expect(await lockContract.owner()).to.equal(owner.address);
+      console.log(owner.address);
+    });
+
+    // CHECKING THE BALANCE
+    it("Should receive and store the funds to lockContract", async () => {
+      const { lockContract, lockAmount } = await loadFixture(runEveryTime);
+
+      // console.log(lockContract);
+      // console.log(owner);
+
+      //* TO GET THE BALANCE OF THE CONTRACT
+      //* In previous depreciated code
+      // const contractBalance = await ethers.provider.getBalance(lockContract);
+
+      //* In the current mode of code
+      const contractBalance = await ethers.provider.getBalance(lockContract);
+      console.log(contractBalance);
+    });
+
+    // CONDITION CHECK
+    it("Should fail if the unlock is not in the future", async () => {
+      const latestTime = await time.latest();
+      // console.log(latestTime);
+      // console.log(latestTime / 60 / 60 / 60 / 24);
+
+      const lockContract = await ethers.getContractFactory("LockContract");
+      // console.log(lockContract);
+
+      await expect(
+        lockContract.deploy(latestTime, { value: 1 })
+      ).to.be.revertedWith("Unlock time should be in the future");
+    });
+
+    // ("Note that: To prevent AssertionError, input in the revertedWith should be the same.");
+  });
+
+  describe("Withdrawal", () => {
+    describe("Validation", () => {
+      // TIME CHECK FOT WITHDRAW
+      it("Should revert with the right if called too soon", async () => {
+        const { lockContract } = await loadFixture(runEveryTime);
+
+        await expect(lockContract.withdraw()).to.be.revertedWith(
+          "You can't withdraw yet"
+        );
+      });
+
+      it("Should revert with message for right owner", async () => {
+        const { lockContract, unlockTime, otherAccount } = await loadFixture(
+          runEveryTime
+        );
+
+        // const newTime = await time.increaseTo(unlockTime);
+        // console.log(newTime);
+
+        await time.increaseTo(unlockTime);
+
+        await expect(
+          lockContract.connect(otherAccount).withdraw()
+        ).to.be.revertedWith("You aren't the owner");
+      });
+
+      it("Should not fail if the unlockTime is arrived and the owner calls it", async () => {
+        const { lockContract, unlockTime } = await loadFixture(runEveryTime);
+
+        await time.increaseTo(unlockTime);
+        await expect(lockContract.withdraw()).not.to.be.reverted;
+      });
+    });
+
+    // CHECKING FOR EVENTS
+    describe("EVENTS", () => {
+      // SUBMIT EVENT
+      it("Should emit the event on withdrawal", async () => {
+        const { lockContract, unlockTime, lockAmount } = await loadFixture(
+          runEveryTime
+        );
+
+        await time.increaseTo(unlockTime);
+
+        await expect(lockContract.withdraw())
+          .to.emit(lockContract, "Withdrawal")
+          .withArgs(lockAmount, anyValue);
+      });
+    });
+
+    // TRANSFER
+    describe("Transfer", () => {
+      it("Should transfer the fund to the owner", async () => {
+        const { lockContract, lockAmount, unlockTime, owner } =
+          await loadFixture(runEveryTime);
+
+        await time.increaseTo(unlockTime);
+
+        await expect(lockContract.withdraw()).to.changeEtherBalances(
+          [owner, lockContract],
+          [lockAmount, -lockAmount]
+        );
+      });
     });
   });
 
