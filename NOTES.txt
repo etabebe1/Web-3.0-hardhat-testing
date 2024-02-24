@@ -45,3 +45,6 @@ npx hardhat run script/deploy.js (this is an example)
 
 => To deploy script in to the LOCAL-HOST network
 npx hardhat run --network lockhost <path/filename>
+
+=> To Started HTTP and WebSocket JSON-RPC server at http://127.0.0.1:8545/
+npx hardhat node // this gives us accounts that has free ETH for testing
