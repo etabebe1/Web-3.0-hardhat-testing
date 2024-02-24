@@ -38,8 +38,10 @@ AVAILABLE TASKS:
   test                  Runs mocha tests
   typechain             Generate Typechain typings for compiled contracts
   verify                Verifies contract on Etherscan
-
 To get help for a specific task run: npx hardhat help [task]
 
 => To deploy script file 
 npx hardhat run script/deploy.js (this is an example)
+
+=> To deploy script in to the LOCAL-HOST network
+npx hardhat run --network lockhost <path/filename>
